@@ -38,6 +38,29 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+
+app.get('/getValue/:myData', async (req, res) => {
+  jsonKeyValue = await getKeyValue(req.params.myData);
+  console.log(jsonKeyValue)
+  
+  d = await autoData.findOne({name: jsonKeyValue.key})
+
+  var isTaskCompleted = null
+  var value = null
+
+  if(d == null) {
+    console.log("not found")
+    isTaskCompleted = false 
+    value = -1 
+  }else {
+    console.log("found")
+    isTaskCompleted = true
+    value = d.value
+  }
+
+  res.send({functionType : "getValue", taskCompleted: isTaskCompleted, value: value});
+});
+
 app.get('/insertOne/:myData', async (req, res) => {
   jsonKeyValue = await getKeyValue(req.params.myData);
   console.log(jsonKeyValue)
