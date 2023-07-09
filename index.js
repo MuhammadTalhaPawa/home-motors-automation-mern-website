@@ -3,12 +3,22 @@ const express = require('express')
 const app = express();
 port = 8000;
 
+function getKeyValue(data) {
+  var keyValue = data.split('=');
+  jsonValue = {
+    key : keyValue[0],
+    value : keyValue[1]
+  }
+  return jsonValue
+}
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
 app.get('/insert/:myData', (req, res) => {
-  console.log(req.params.myData);
+  jsonKeyValue = getKeyValue(req.params.myData);
+  console.log(jsonKeyValue)
   res.send('inserted');
 });
 
