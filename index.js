@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 port = 8000;
 
 mongoose.connect(
-  "mongodb://localhost:27017/HomeAutoDB",
+  process.env.atlasMongoURL,
   {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -38,36 +38,70 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/insert/:myData', async (req, res) => {
+app.get('/insertOne/:myData', async (req, res) => {
   jsonKeyValue = await getKeyValue(req.params.myData);
   console.log(jsonKeyValue)
   
   d = await autoData.findOne({name: jsonKeyValue.key})
 
-  inserted = true
+  var isTaskCompleted = null
   if(d == null) {
     console.log("not found")
     await autoData.insertMany({
       name: jsonKeyValue.key,
       value: jsonKeyValue.value
     })
-    
+    isTaskCompleted = true    
   }else {
     console.log("found")
-    inserted = false
+    isTaskCompleted = false
   }
 
-  res.send({functionType : "insert", isInserted: inserted});
+  res.send({functionType : "insertOne", taskCompleted: isTaskCompleted});
 });
 
-app.get('/delete/:myData', (req, res) => {
-  console.log(req.params.myData);
-  res.send('deleted');
+app.get('/deleteOne/:myData', async (req, res) => {
+  jsonKeyValue = await getKeyValue(req.params.myData);
+  console.log(jsonKeyValue)
+
+  d = await autoData.findOne({name: jsonKeyValue.key})
+  
+  var isTaskCompleted = null
+  if(d == null) {
+    console.log("not found")
+    isTaskCompleted = false    
+  }else {
+    console.log("found")
+    await autoData.deleteOne({name:jsonKeyValue.key})
+    isTaskCompleted = true
+  }
+
+  res.send({functionType : "deleteOne", taskCompleted: isTaskCompleted});
 });
 
-app.get('/update/:myData', (req, res) => {
-  console.log(req.params.myData);
-  res.send('updated');
+app.get('/deleteAll', async (req, res) => {
+  await autoData.deleteMany({}) 
+
+  res.send({functionType : "deleteAll", taskCompleted: true});
+});
+
+app.get('/updateOne/:myData', async(req, res) => {
+  jsonKeyValue = await getKeyValue(req.params.myData);
+  console.log(jsonKeyValue)
+  
+  d = await autoData.findOne({name: jsonKeyValue.key})
+
+  var isTaskCompleted = null
+  if(d == null) {
+    console.log("not found")
+    isTaskCompleted = false    
+  }else {
+    console.log("found")
+    await autoData.updateOne({name: jsonKeyValue.key},{$set : {value: jsonKeyValue.value}})
+    isTaskCompleted = true
+  }
+
+  res.send({functionType : "updateOne", taskCompleted: isTaskCompleted});
 });
 
 app.listen(port, () =>
