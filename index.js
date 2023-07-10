@@ -8,8 +8,9 @@ const app = express();
 
 app.use(bodyParser.json())
 
-port = 8000;
+port = process.env.PORT || 8000;
 
+mongoose.set('strictQuery',false)
 mongoose.connect(
   process.env.atlasMongoURL,
   {
