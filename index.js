@@ -37,7 +37,7 @@ function getKeyValue(data) {
 }
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Home motor automation Panga is not changA...');
 });
 
 
