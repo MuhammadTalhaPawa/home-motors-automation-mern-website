@@ -53,7 +53,7 @@ function getAllKeyValues(data) {
 }
 
 app.get("/", (req, res) => {
-  res.send("Home motor update: updateAllValues");
+  res.send("Home motor update: updateAllValues main malang haan");
 });
 
 app.get("/getValue/:myData", async (req, res) => {
